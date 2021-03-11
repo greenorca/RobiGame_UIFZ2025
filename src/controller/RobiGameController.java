@@ -25,6 +25,8 @@ public class RobiGameController extends PApplet{
 	Timer tim;
 	TimerTask tTask;
 	
+	private static final int START=0, GAME=1, FINISH=2;
+	private int gameState = START;
 	
 	/**
 	 * creates and runs the entire app
@@ -78,6 +80,14 @@ public class RobiGameController extends PApplet{
 	 * this method does all drawing
 	 */
 	public void draw(){
+		switch (gameState) {
+		case START:
+		case GAME: drawGame(); break;
+		case FINISH: break;
+		}
+	}
+	
+	private void drawGame() {
 		background(0x202020);
 		playerRobi.draw();
 		//zeichne KI-Enemies
@@ -163,6 +173,7 @@ public class RobiGameController extends PApplet{
 	 */
 	private boolean checkScore(Robi r) {
 		if (r.getScore() >= 100) {
+			gameState = FINISH;
 			tTask.cancel();
 			return true;
 		}
