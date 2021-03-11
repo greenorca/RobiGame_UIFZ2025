@@ -83,8 +83,15 @@ public class RobiGameController extends PApplet{
 		switch (gameState) {
 		case START:
 		case GAME: drawGame(); break;
-		case FINISH: break;
+		case FINISH: drawGameOver(); break;
 		}
+	}
+	
+	private void drawGameOver() {
+		fill(255);
+		textSize(42);
+		text("Game Over: " + winner, 100,100);
+		noLoop(); // gewusst wie, spart energie :-)
 	}
 	
 	private void drawGame() {
@@ -94,8 +101,7 @@ public class RobiGameController extends PApplet{
 		for (int i=0; i < kiEnemies.size(); i++) {
 			Robi enny = kiEnemies.get(i);
 			enny.draw();
-		}
-			
+		}			
 			
 		//iterate over all foot items
 		for (int i=0; i <foodItems.size(); i++){
@@ -174,7 +180,7 @@ public class RobiGameController extends PApplet{
 	private boolean checkScore(Robi r) {
 		if (r.getScore() >= 100) {
 			gameState = FINISH;
-			tTask.cancel();
+			tim.cancel();
 			return true;
 		}
 		return false;
