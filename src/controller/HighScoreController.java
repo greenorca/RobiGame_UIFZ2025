@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import model.HighScore;
 
@@ -22,9 +23,10 @@ public class HighScoreController {
 	 * kleiner "Testrahmen"
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		HighScoreController testController = new HighScoreController();
 		testController.readHighscores();
+		testController.sortScores();
 		testController.printHighscores();
 	}
 	
@@ -38,16 +40,33 @@ public class HighScoreController {
 		return scores;
 	}
 	
+	private void sortScores() {
+		
+		scores.sort((a,b) -> b.getScore()-a.getScore());
+		
+		scores.sort(new Comparator<HighScore>() {
+
+			@Override
+			public int compare(HighScore a, HighScore b) {
+				return b.getScore()-a.getScore();
+			}
+			
+		});
+	}
+	
 	/**
 	 * liest alle HighScore-Objekte aus der Datei einlesen
 	 */
 	public void readHighscores() {
 		scores = new ArrayList<>();
 		
-		File file = new File("highscore.lst");
+		File file = new File(System.getProperty("user.home")+"/highscore.lst");
+		BufferedReader bfr = null;
 		try {
+			file.createNewFile();
+
 			FileReader reader = new FileReader(file);
-			BufferedReader bfr = new BufferedReader(reader);
+			bfr = new BufferedReader(reader);
 			
 			while(bfr.ready()) {
 				String line = bfr.readLine();
@@ -55,12 +74,13 @@ public class HighScoreController {
 				scores.add(parseHighscore(line)); //HighScore-Objekt parsen und in Liste einfügen
 			}			
 			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException ioex) {
+			System.out.println(file.getAbsolutePath());
 			ioex.printStackTrace();
-		}			
+		} finally {
+			try { bfr.close();
+			} catch (IOException e) {} 
+		}
 	}
 	
 	private HighScore parseHighscore(String line) {
